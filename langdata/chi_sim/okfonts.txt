@@ -1,18 +1,3 @@
-SimSun (Mới)
-SimHei (Mới)
-KaiTi (Mới)
-DengXian (Mới)
-DengXian Light (Mới)
-Microsoft YaHei (Mới)
-Noto Sans CJK SC (Mới)
-Noto Sans SC (Mới)
-Noto Sans SC Bold (Mới)
-Noto Serif SC (Mới)
-Source Han Sans SC (Mới)
-Source Han Serif SC (Mới)
-FangSong (Mới)
-PingFang SC (Mới)
-LiGuoFu (Mới)
 Arial Unicode MS Regular
 AR PL UKai CN
 AR PL UKai HK
