@@ -16,4 +16,4 @@ def split_text_file(input_path, output_path, min_len=10, max_len=55):
                 i += max_len
 
 # Gọi hàm với tên file cụ thể
-split_text_file('trainingtext.txt', 'optimizedtrainingtext.txt')
+split_text_file('First_chi_sim_trainingtext.txt', 'chi_sim_trainingtext.txt')
