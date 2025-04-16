@@ -1,4 +1,3 @@
-
 Tesseract OCR data trained for Simplified Chinese
 The training fonts includes commonly used fonts for
 SimSun (Mới)
@@ -30,3 +29,4 @@ AR PL UMing TW MBE Light
 WenQuanYi Zen Hei Medium
 
 and other 100+
+
