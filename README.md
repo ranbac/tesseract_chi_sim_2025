@@ -21,20 +21,20 @@ The training fonts includes commonly used fonts:
 
 and more.
 
-II. HOW TO PREPARE for ground truth data
+II. HOW TO PREPARE Training tools:
+
+Download from: https://github.com/tesseract-ocr/tesstrain, then extract, you have tesstrain folder. Then read Installation.
+
+III. HOW TO PREPARE for ground truth data
 1. Install fonts and check fonts.
 2. Prepare training text
 3. Copy text from www.thepaper.cn. (100-200 articles), then save as: First_chi_sim_trainingtext.txt
 4. Use optimize_training_text.py to optimize training text (one line has 50-55 characters). You will have chi_sim_trainingtext.txt. Copy all content from chi_sim_trainingtext.txt to chi_sim.training_text. Place file chi_sim.training_text in folder: langdata
 5. Use split_training_textmultifont.py to create .gt.txt, .tif, .box for ground truth data. You can place them in folder: tesstrain/data/ranbac-ground-truth.
 
-III. HOW TO PREPARE for data
+IV. HOW TO PREPARE for data
 
 Copy all file from langdata folder: ranbac.numbers, ranbac.punc, ranbac.traineddata, ranbac.unicharset, ranbac.wordlist, then place them in folder: tesstrain\data\ranbac
-
-IV. HOW TO PREPARE Training tools:
-
-Download from: https://github.com/tesseract-ocr/tesstrain, then extract, you have tesstrain folder. Then read Installation.
 
 V. HOW TO TRAINING
 
