@@ -54,7 +54,7 @@ At iteration 6776/10000/10000, mean rms=0.477%, delta=1.299%, BCER train=4.644%,
 
 Finished! Selected model with minimal training error rate (BCER) = 3.795
 
-V. TEST WITH REAL DATA:
+VI. TEST WITH REAL DATA:
 
 1. Create an folder: REAL DATA
 2. Prepare some image file: 001.png, 002.jpg...
