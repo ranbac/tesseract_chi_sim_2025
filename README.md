@@ -62,3 +62,5 @@ VI. TEST WITH REAL DATA:
 4.  use command:
  tesseract 001.png 001 -l ranbac
 5. You will have 001.txt. Check content in image and txt.
+
+ You can experience my service for free (Chinese, Vietnamese, English) at: https://tiengtrungquoc.net/ocr/
