@@ -20,7 +20,9 @@ PingFang SC
 LiGuoFu (Handwriting Chinese Font)
 
 and more.
+
 How to train: 
+
 First, you need need prepare training text www.thepaper.cn. Copy 200-500 articles.
 Second, you use optimize_training_text.py to optimize training text (one line has 50-55 characters).
 Third, you use split_training_textmultifont.py to create .gt.txt, .tif, .box for ground truth data. You can place them in folder: tesstrain/data/ranbac-ground-truth.
