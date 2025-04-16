@@ -1,4 +1,5 @@
 Tesseract OCR langdata for Simplified Chinese (China)
+
 This is another trained tesseract data pack for Chinese OCR, more accurate than the https://github.com/tesseract-ocr/tessdata_best
 The training fonts includes commonly used fonts:
 SimSun 
