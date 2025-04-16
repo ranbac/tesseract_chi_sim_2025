@@ -32,11 +32,11 @@ III. HOW TO PREPARE for data
 
 Copy all file from langdata folder: ranbac.numbers, ranbac.punc, ranbac.traineddata, ranbac.unicharset, ranbac.wordlist, then place them in folder: tesstrain\data\ranbac
 
-HOW TO PREPARE Training tools:
+IV. HOW TO PREPARE Training tools:
 
 Download from: https://github.com/tesseract-ocr/tesstrain, then extract, you have tesstrain folder. Then read Installation.
 
-IV. HOW TO TRAINING:
+V. HOW TO TRAINING
 
 At tesstrain folder, open Git Bash
 
@@ -55,7 +55,10 @@ At iteration 6776/10000/10000, mean rms=0.477%, delta=1.299%, BCER train=4.644%,
 Finished! Selected model with minimal training error rate (BCER) = 3.795
 
 V. TEST WITH REAL DATA:
-Create an folder: REAL DATA
-Prepare some image file: 001.png, 002.jpg...
-tesseract.exe 001.png 001 -l ranbac
-you will have 001.txt. Check content in image and txt.
+
+1. Create an folder: REAL DATA
+2. Prepare some image file: 001.png, 002.jpg...
+3. At REAL DATA folder, use command:
+ tesseract 001.png 001 -l ranbac
+Example: C:\Users\ASUS\Downloads\REAL_DATA>
+5. You will have 001.txt. Check content in image and txt.
