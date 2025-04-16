@@ -58,7 +58,7 @@ VI. TEST WITH REAL DATA:
 
 1. Create an folder: REAL DATA
 2. Prepare some image file: 001.png, 002.jpg...
-3. At REAL DATA folder, use command:
+3. At REAL DATA folder, Example: C:\Users\ASUS\Downloads\REAL_DATA>
+4.  use command:
  tesseract 001.png 001 -l ranbac
-Example: C:\Users\ASUS\Downloads\REAL_DATA>
 5. You will have 001.txt. Check content in image and txt.
