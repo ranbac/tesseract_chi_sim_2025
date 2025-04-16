@@ -1,0 +1,15 @@
+Installation
+
+Auxiliaries
+You will need at least GNU make (minimal version 4.2), wget, find, bash, and unzip.
+
+Leptonica, Tesseract
+You will need a recent version (>= 5.3) of tesseract built with the training tools and matching leptonica bindings. Build instructions and more can be found in the Tesseract User Manual.
+
+Windows
+Install the latest tesseract (e.g. from https://digi.bib.uni-mannheim.de/tesseract/), and make sure that tesseract is added to your PATH.
+Install Python 3
+Install Git SCM to Windows - it provides a lot of linux utilities on Windows (e.g. find, unzip, rm) and put C:\Program Files\Git\usr\bin to the beginning of your PATH variable (temporarily you can do it in cmd with set PATH=C:\Program Files\Git\usr\bin;%PATH% - unfortunately there are several Windows tools with the same name as on linux (find, sort) with different behavior/functionality and there is need to avoid them during training.
+Install winget/Windows Package Manager and then run winget install ezwinports.make and winget install wget to install missing tools.
+Python
+You need a recent version of Python 3.x. For image processing the Python library Pillow is used. If you don't have a global installation, please use the provided requirements file pip install -r requirements.txt.
