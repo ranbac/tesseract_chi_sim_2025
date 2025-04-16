@@ -54,4 +54,8 @@ At iteration 6776/10000/10000, mean rms=0.477%, delta=1.299%, BCER train=4.644%,
 
 Finished! Selected model with minimal training error rate (BCER) = 3.795
 
-
+V. TEST WITH REAL DATA:
+Create an folder: REAL DATA
+Prepare some image file: 001.png, 002.jpg...
+tesseract.exe 001.png 001 -l ranbac
+you will have 001.txt. Check content in image and txt.
