@@ -29,7 +29,7 @@ III. HOW TO PREPARE for ground truth data
 1. Install fonts and check fonts.
 2. Prepare training text
 3. Copy text from www.thepaper.cn. (100-200 articles), then save as: First_chi_sim_trainingtext.txt
-4. Use optimize_training_text.py to optimize training text (one line has 50-55 characters). You will have chi_sim_trainingtext.txt. Copy all content from chi_sim_trainingtext.txt to chi_sim.training_text (in folder: langdata)
+4. Use optimize_training_text.py to optimize training text (one line has 50-55 characters). You will have chi_sim_trainingtext.txt. Copy all content from chi_sim_trainingtext.txt to chi_sim.training_text (in  langdata folder)
 5. Use split_training_textmultifont.py to create .gt.txt, .tif, .box for ground truth data. You can place them in folder: tesstrain/data/ranbac-ground-truth.
 
 IV. HOW TO PREPARE for data
