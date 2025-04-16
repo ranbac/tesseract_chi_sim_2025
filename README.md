@@ -29,15 +29,18 @@ HOW TO PREPARE for ground truth data
 5. Use split_training_textmultifont.py to create .gt.txt, .tif, .box for ground truth data. You can place them in folder: tesstrain/data/ranbac-ground-truth.
 
 HOW TO PREPARE for data
+
 Copy all file from langdata folder: ranbac.numbers, ranbac.punc, ranbac.traineddata, ranbac.unicharset, ranbac.wordlist, then place them in folder: tesstrain\data\ranbac
 
 HOW TO PREPARE Training tools:
 
-Download from: https://github.com/tesseract-ocr/tesstrain, then extract, you have tesstrain folder. 
+Download from: https://github.com/tesseract-ocr/tesstrain, then extract, you have tesstrain folder. Then read Installation.
 
 HOW TO TRAINING:
 
-Now, you use:  make training MODEL_NAME=ranbac START_MODEL=chi_sim TESSDATA=../tessdata/ MAX_ITERATIONS=20000.
+At tesstrain folder, open Git Bash
+
+$ make training MODEL_NAME=ranbac START_MODEL=chi_sim TESSDATA=../tessdata/ MAX_ITERATIONS=20000.
 
 You can increase MAX_ITERATIONS to 80000 or larger, to achieve best BCER ~ 1%, BWER ~ 5%.
 
