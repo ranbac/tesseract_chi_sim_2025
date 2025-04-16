@@ -1,20 +1,20 @@
 Tesseract OCR data trained for Simplified Chinese
 The training fonts includes commonly used fonts for
-SimSun (Mới)
-SimHei (Mới)
-KaiTi (Mới)
-DengXian (Mới)
-DengXian Light (Mới)
-Microsoft YaHei (Mới)
-Noto Sans CJK SC (Mới)
-Noto Sans SC (Mới)
-Noto Sans SC Bold (Mới)
-Noto Serif SC (Mới)
-Source Han Sans SC (Mới)
-Source Han Serif SC (Mới)
-FangSong (Mới)
-PingFang SC (Mới)
-LiGuoFu (Mới)
+SimSun 
+SimHei 
+KaiTi 
+DengXian 
+DengXian Light
+Microsoft YaHei 
+Noto Sans CJK SC 
+Noto Sans SC 
+Noto Sans SC Bold 
+Noto Serif SC 
+Source Han Sans SC 
+Source Han Serif SC 
+FangSong
+PingFang SC 
+LiGuoFu
 Arial Unicode MS Regular
 AR PL UKai CN
 AR PL UKai HK
