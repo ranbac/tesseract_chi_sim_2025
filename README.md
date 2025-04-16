@@ -30,10 +30,17 @@ Second, you use optimize_training_text.py to optimize training text (one line ha
 Third, you use split_training_textmultifont.py to create .gt.txt, .tif, .box for ground truth data. You can place them in folder: tesstrain/data/ranbac-ground-truth.
 
 Now, you use:  make training MODEL_NAME=ranbac START_MODEL=chi_sim TESSDATA=../tessdata/ MAX_ITERATIONS=20000.
-Drink a coffee, play games or sleep.
+
 You can increase MAX_ITERATIONS to 80000 or larger, to achieve best BCER ~ 1%, BWER ~ 5%.
+
+Drink a coffee, play games or sleep.
+
 After training finish, you will receiver ranbac.traineddata in folder: tesstrain\data. 
-Example: At iteration 6776/10000/10000, mean rms=0.477%, delta=1.299%, BCER train=4.644%, BWER train=45.050%, skip ratio=0.000%, New worst BCER = 4.644 wrote checkpoint.
+
+Example: 
+
+At iteration 6776/10000/10000, mean rms=0.477%, delta=1.299%, BCER train=4.644%, BWER train=45.050%, skip ratio=0.000%, New worst BCER = 4.644 wrote checkpoint.
+
 Finished! Selected model with minimal training error rate (BCER) = 3.795
 
 
