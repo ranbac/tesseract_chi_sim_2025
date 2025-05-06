@@ -29,7 +29,7 @@ lines = lines[:count]
 
 # Starting line count (starting from 6000)
 line_count = 54000
-fonts =  ['Arial Unicode MS', 'AR PL UKai CN']  # List of fonts
+fonts =  ['Arial Unicode MS', 'AR PL UKai CN', 'Lisu', 'YouYuan']  # List of fonts
 
 for line in lines:
     # Construct the filename for the ground truth file
