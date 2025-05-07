@@ -27,11 +27,7 @@ III. HOW TO PREPARE for ground truth data
 4. Use optimize_training_text.py to optimize training text (one line has 50-55 characters). You will have chi_sim_trainingtext.txt. Copy all content from chi_sim_trainingtext.txt to chi_sim.training_text (in  langdata folder)
 5. Use split_training_textmultifont.py to create .gt.txt, .tif, .box for ground truth data. You can place them in folder: tesstrain/data/ranbac-ground-truth.
 
-IV. HOW TO PREPARE for data
-
-Copy all file from langdata folder: ranbac.numbers, ranbac.punc, ranbac.traineddata, ranbac.unicharset, ranbac.wordlist, then place them in folder: tesstrain\data\ranbac
-
-V. HOW TO TRAINING
+IV. HOW TO TRAINING
 
 At tesstrain folder, open Git Bash
 
