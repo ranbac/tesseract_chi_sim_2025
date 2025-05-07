@@ -3,23 +3,18 @@ I. Tesseract OCR langdata for Simplified Chinese (China)
 This is another trained tesseract data pack for Chinese OCR.
 The training fonts includes commonly used fonts:
 
-1. SimSun 
-2. SimHei 
-3. KaiTi 
-4. DengXian 
-5. DengXian Light 
-6. Microsoft YaHei 
-7. Noto Sans CJK SC
-8. Noto Sans SC
-9. Noto Sans SC Bold 
-10. Noto Serif SC
-11. Source Han Sans SC
-12. Source Han Serif SC
-13. FangSong
-14. PingFang SC
-15. LiGuoFu (Handwriting Chinese Font)
-
-and more.
+1. SimSun  
+2. SimHei  
+3. KaiTi  
+4. DengXian  
+5. Microsoft YaHei  
+6. Noto Serif SC  
+7. Source Han Serif SC  
+8. FangSong  
+9. PingFang SC  
+10. Noto Sans SC  
+11. Source Han Sans SC  
+12. WenQuanYi Zen Hei Medium  
 
 II. HOW TO PREPARE Training tools:
 
