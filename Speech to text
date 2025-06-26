@@ -1,12 +1,12 @@
 /*
  * Plugin Name: ChatGPT STT (Speech-to-Text)
  * Description: Chuyển giọng nói thành văn bản bằng API Whisper của OpenAI.
- * Version: 1.0
+ * Version: 1.1
  * Author: Strong Anchor Tech
  * Author URI: https://stronganchortech.com
  */
 
-// Tạo trang cấu hình API Key trong admin
+// ====== Tạo trang cấu hình API Key trong admin ======
 function chatgpt_stt_admin_page() {
     add_submenu_page(
         'tools.php',
@@ -45,9 +45,11 @@ function chatgpt_stt_register_settings() {
 }
 add_action('admin_init', 'chatgpt_stt_register_settings');
 
-// Hàm gọi OpenAI Whisper để nhận text từ audio
+// ====== Gọi API Whisper để chuyển âm thanh thành văn bản ======
 function transcribe_audio_to_text($audio_path, $user_prompt) {
-    $api_key = get_option('chatgpt_api_key');
+    $api_key = defined('CHATGPT_API_KEY') ? CHATGPT_API_KEY : get_option('chatgpt_api_key');
+    if (!$api_key) return '⚠️ Thiếu API key.';
+
     $url = 'https://api.openai.com/v1/audio/transcriptions';
 
     $postfields = [
@@ -67,22 +69,33 @@ function transcribe_audio_to_text($audio_path, $user_prompt) {
     curl_setopt($ch, CURLOPT_POSTFIELDS, $postfields);
 
     $response = curl_exec($ch);
+    $error = curl_error($ch);
+    $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     curl_close($ch);
 
-    return !empty($response) ? $response : 'Error: Không nhận được phản hồi.';
+    if ($http_code !== 200) {
+        return '❌ Lỗi API: ' . ($response ?: $error);
+    }
+
+    return $response ?: '❌ Không nhận được phản hồi.';
 }
 
-// Shortcode hiển thị form STT
+// ====== Hiển thị form upload + xử lý ======
 function audio_to_text_shortcode_callback() {
     $output = '<form method="post" enctype="multipart/form-data">';
-    $output .= '<label for="audio_file">Tải lên file âm thanh:</label><br>';
+    $output .= '<label for="audio_file">🎙️ Tải lên file âm thanh:</label><br>';
     $output .= '<input type="file" name="audio_file" accept="audio/*" required><br><br>';
     $output .= '<input type="submit" value="Chuyển giọng nói thành văn bản">';
     $output .= '</form>';
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['audio_file'])) {
+        $allowed_types = ['audio/mpeg', 'audio/wav', 'audio/x-wav', 'audio/mp4', 'audio/webm'];
+        $file_type = $_FILES['audio_file']['type'];
+
         if ($_FILES['audio_file']['size'] > 2 * 1024 * 1024) {
             $output .= '<div style="color:red;">❌ File vượt quá giới hạn 2MB.</div>';
+        } elseif (!in_array($file_type, $allowed_types)) {
+            $output .= '<div style="color:red;">❌ Định dạng file không được hỗ trợ. Chỉ chấp nhận: MP3, WAV, MP4, WEBM.</div>';
         } else {
             $upload = wp_handle_upload($_FILES['audio_file'], ['test_form' => false]);
             if (isset($upload['error'])) {
@@ -91,7 +104,13 @@ function audio_to_text_shortcode_callback() {
                 $audio_file_path = $upload['file'];
                 $prompt = isset($_POST['user_prompt']) ? sanitize_text_field($_POST['user_prompt']) : '';
                 $text = transcribe_audio_to_text($audio_file_path, $prompt);
-                $output .= '<h3>Kết quả:</h3><div style="background:#f4f4f4;padding:10px;border:1px solid #ccc;">' . esc_html($text) . '</div>';
+
+                $output .= '<h3>🧾 Kết quả:</h3><div style="background:#f4f4f4;padding:10px;border:1px solid #ccc;white-space:pre-wrap;">' . esc_html($text) . '</div>';
+
+                // ✅ Xoá file tạm
+                if (file_exists($audio_file_path)) {
+                    unlink($audio_file_path);
+                }
             }
         }
     }
