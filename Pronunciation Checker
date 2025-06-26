@@ -1,0 +1,189 @@
+/*
+ * Plugin Name: Pronunciation Checker
+ * Description: Ghi âm và chấm điểm phát âm từng từ bằng API Whisper của OpenAI.
+ * Version: 1.0
+ * Author: Strong Anchor Tech
+ */
+
+// ======= Cài đặt API Key =======
+function pc_register_settings_page() {
+    add_options_page('Pronunciation Checker Settings', 'Pronunciation Checker', 'manage_options', 'pc-settings', 'pc_settings_page');
+}
+add_action('admin_menu', 'pc_register_settings_page');
+
+function pc_settings_page() {
+    ?>
+    <div class="wrap">
+        <h2>Pronunciation Checker - Settings</h2>
+        <form method="post" action="options.php">
+            <?php
+                settings_fields('pc_settings_group');
+                do_settings_sections('pc_settings_group');
+            ?>
+            <table class="form-table">
+                <tr valign="top">
+                    <th scope="row">OpenAI API Key</th>
+                    <td><input type="text" name="pc_api_key" value="<?php echo esc_attr(get_option('pc_api_key')); ?>" size="60" /></td>
+                </tr>
+            </table>
+            <?php submit_button(); ?>
+        </form>
+    </div>
+    <?php
+}
+add_action('admin_init', function() {
+    register_setting('pc_settings_group', 'pc_api_key');
+});
+
+// ======= Shortcode chính =======
+add_shortcode('pronunciation_checker', function($atts) {
+    $atts = shortcode_atts(['text' => 'Hello world'], $atts);
+    ob_start();
+    ?>
+    <div>
+        <p><strong>🎯 Câu cần đọc:</strong> "<?php echo esc_html($atts['text']); ?>"</p>
+        <button id="pc-start">🎤 Bắt đầu ghi</button>
+        <button id="pc-stop" disabled>⏹️ Dừng ghi</button>
+        <p id="pc-status"></p>
+        <audio id="pc-audio" controls style="display:none; margin-top:10px;"></audio>
+        <div id="pc-result" style="margin-top:15px;"></div>
+    </div>
+
+    <script>
+    let recorder, chunks = [];
+
+    document.getElementById('pc-start').addEventListener('click', async () => {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        recorder = new MediaRecorder(stream);
+        chunks = [];
+
+        recorder.ondataavailable = e => chunks.push(e.data);
+        recorder.onstop = () => {
+            const blob = new Blob(chunks, { type: 'audio/webm' });
+            const url = URL.createObjectURL(blob);
+            document.getElementById('pc-audio').src = url;
+            document.getElementById('pc-audio').style.display = 'block';
+
+            document.getElementById('pc-status').innerText = '🔄 Đang chấm điểm...';
+
+            const formData = new FormData();
+            formData.append('action', 'pc_check');
+            formData.append('audio', blob, 'recording.webm');
+            formData.append('text', "<?php echo esc_js($atts['text']); ?>");
+
+            fetch('<?php echo admin_url('admin-ajax.php'); ?>', {
+                method: 'POST',
+                body: formData
+            }).then(r => r.text()).then(html => {
+                document.getElementById('pc-status').innerText = '✅ Xong';
+                document.getElementById('pc-result').innerHTML = html;
+            }).catch(e => {
+                document.getElementById('pc-status').innerText = '❌ Lỗi gửi dữ liệu.';
+                console.error(e);
+            });
+        };
+
+        recorder.start();
+        document.getElementById('pc-status').innerText = '🎙️ Đang ghi...';
+        document.getElementById('pc-start').disabled = true;
+        document.getElementById('pc-stop').disabled = false;
+
+        setTimeout(() => {
+            if (recorder.state === 'recording') {
+                recorder.stop();
+                document.getElementById('pc-start').disabled = false;
+                document.getElementById('pc-stop').disabled = true;
+            }
+        }, 30000);
+    });
+
+    document.getElementById('pc-stop').addEventListener('click', () => {
+        recorder.stop();
+        document.getElementById('pc-start').disabled = false;
+        document.getElementById('pc-stop').disabled = true;
+    });
+    </script>
+    <?php
+    return ob_get_clean();
+});
+
+// ======= Xử lý AJAX =======
+add_action('wp_ajax_pc_check', 'pc_handle_ajax');
+add_action('wp_ajax_nopriv_pc_check', 'pc_handle_ajax');
+
+function pc_handle_ajax() {
+    if (!isset($_FILES['audio']) || !isset($_POST['text'])) {
+        echo '❌ Dữ liệu không hợp lệ.';
+        wp_die();
+    }
+
+    $file = $_FILES['audio'];
+    $expected = sanitize_text_field($_POST['text']);
+    $upload = wp_handle_upload($file, ['test_form' => false]);
+
+    if (isset($upload['error'])) {
+        echo '❌ Upload lỗi: ' . esc_html($upload['error']);
+        wp_die();
+    }
+
+    $path = $upload['file'];
+    $transcribed = pc_transcribe_whisper($path, $expected);
+    if (file_exists($path)) unlink($path);
+
+    $result = pc_compare_texts($expected, $transcribed);
+
+    echo '<p><strong>🗣️ Bạn đọc:</strong> ' . esc_html($transcribed) . '</p>';
+    echo '<p><strong>📘 Mẫu:</strong> ' . esc_html($expected) . '</p>';
+    echo '<p><strong>📊 Điểm: ' . $result['score'] . '%</strong></p>';
+    echo '<p><strong>Phân tích:</strong><br>';
+    foreach ($result['details'] as $w) {
+        echo $w['correct']
+            ? "<span style='color:green;font-weight:bold'>{$w['word']}</span> "
+            : "<span style='color:red;text-decoration:underline'>{$w['word']}</span> ";
+    }
+    echo '</p>';
+
+    wp_die();
+}
+
+// ======= So sánh và chấm điểm =======
+function pc_compare_texts($expected, $actual) {
+    $e = preg_split('/\s+/', strtolower(trim($expected)));
+    $a = preg_split('/\s+/', strtolower(trim($actual)));
+    $matched = 0;
+    $details = [];
+
+    foreach ($e as $i => $word) {
+        $correct = ($a[$i] ?? '') === $word;
+        if ($correct) $matched++;
+        $details[] = ['word' => $word, 'correct' => $correct];
+    }
+
+    $score = round(($matched / max(1, count($e))) * 100);
+    return ['score' => $score, 'details' => $details];
+}
+
+// ======= Gọi OpenAI Whisper =======
+function pc_transcribe_whisper($path, $prompt = '') {
+    $api_key = get_option('pc_api_key');
+    if (!$api_key) return '⚠️ Thiếu API key.';
+
+    $ch = curl_init();
+    $data = [
+        'file' => new CURLFile($path),
+        'model' => 'whisper-1',
+        'response_format' => 'text',
+        'prompt' => $prompt
+    ];
+    curl_setopt_array($ch, [
+        CURLOPT_URL => 'https://api.openai.com/v1/audio/transcriptions',
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_POST => true,
+        CURLOPT_POSTFIELDS => $data,
+        CURLOPT_HTTPHEADER => ['Authorization: Bearer ' . $api_key]
+    ]);
+    $res = curl_exec($ch);
+    curl_close($ch);
+
+    return $res ?: '❌ Lỗi không có phản hồi.';
+}
