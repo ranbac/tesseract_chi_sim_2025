@@ -85,7 +85,7 @@ function audio_to_text_shortcode_callback() {
     $output = '<form method="post" enctype="multipart/form-data">';
     $output .= '<label for="audio_file">🎙️ Tải lên file âm thanh:</label><br>';
     $output .= '<input type="file" name="audio_file" accept="audio/*" required><br><br>';
-    $output .= '<input type="submit" value="Chuyển giọng nói thành văn bản">';
+    $output .= '<input type="submit" value="Chuyển thành văn bản">';
     $output .= '</form>';
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['audio_file'])) {
@@ -118,3 +118,120 @@ function audio_to_text_shortcode_callback() {
     return $output;
 }
 add_shortcode('audio_to_text_form', 'audio_to_text_shortcode_callback');
+
+
+function chatgpt_stt_live_voice_to_text_shortcode() {
+    ob_start();
+    ?>
+    <div>
+        <button id="start-recording">🎤 Bắt đầu ghi</button>
+        <button id="stop-recording" disabled>⏹️ Dừng ghi</button>
+        <p id="recording-status"></p>
+        <audio id="audio-playback" controls style="display:none; margin-top:10px;"></audio>
+        <div id="transcription-result" style="margin-top:15px;"></div>
+    </div>
+
+    <script>
+    let mediaRecorder;
+    let audioChunks = [];
+
+    document.getElementById('start-recording').addEventListener('click', async () => {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaRecorder = new MediaRecorder(stream);
+        audioChunks = [];
+
+        mediaRecorder.ondataavailable = e => {
+            audioChunks.push(e.data);
+        };
+
+        mediaRecorder.onstop = () => {
+            const blob = new Blob(audioChunks, { type: 'audio/webm' });
+            const audioURL = URL.createObjectURL(blob);
+
+            const audio = document.getElementById('audio-playback');
+            audio.src = audioURL;
+            audio.style.display = 'block';
+
+            document.getElementById('recording-status').innerText = '🔄 Đang xử lý...';
+
+            const formData = new FormData();
+            formData.append('action', 'chatgpt_stt_upload_and_transcribe');
+            formData.append('audio_data', blob, 'recording.webm');
+
+            fetch('<?php echo admin_url('admin-ajax.php'); ?>', {
+                method: 'POST',
+                body: formData
+            })
+            .then(res => res.text())
+            .then(text => {
+                document.getElementById('recording-status').innerText = '✅ Hoàn tất';
+                document.getElementById('transcription-result').innerHTML =
+                    '<h3>🧾 Kết quả:</h3><div style="background:#f9f9f9;padding:10px;border:1px solid #ccc;white-space:pre-wrap;">' +
+                    text + '</div>';
+            })
+            .catch(err => {
+                document.getElementById('recording-status').innerText = '❌ Lỗi khi gửi file.';
+                console.error(err);
+            });
+        };
+
+        mediaRecorder.start();
+        document.getElementById('recording-status').innerText = '🎙️ Đang ghi...';
+        document.getElementById('start-recording').disabled = true;
+        document.getElementById('stop-recording').disabled = false;
+    });
+// ⏱️ Tự động dừng sau 30 giây
+setTimeout(() => {
+    if (mediaRecorder.state === 'recording') {
+        mediaRecorder.stop();
+        document.getElementById('start-recording').disabled = false;
+        document.getElementById('stop-recording').disabled = true;
+        document.getElementById('recording-status').innerText = '⏱️ Hết thời gian ghi (30 giây).';
+    }
+}, 30000); // 30 giây = 30,000 ms
+    document.getElementById('stop-recording').addEventListener('click', () => {
+        mediaRecorder.stop();
+        document.getElementById('start-recording').disabled = false;
+        document.getElementById('stop-recording').disabled = true;
+    });
+    </script>
+    <?php
+    return ob_get_clean();
+}
+add_shortcode('voice_to_text_live', 'chatgpt_stt_live_voice_to_text_shortcode');
+
+add_action('wp_ajax_chatgpt_stt_upload_and_transcribe', 'chatgpt_stt_ajax_upload');
+add_action('wp_ajax_nopriv_chatgpt_stt_upload_and_transcribe', 'chatgpt_stt_ajax_upload');
+
+function chatgpt_stt_ajax_upload() {
+    if (!isset($_FILES['audio_data'])) {
+        wp_send_json_error('❌ Không có file âm thanh.');
+        return;
+    }
+
+    $file = $_FILES['audio_data'];
+    $allowed_types = ['audio/webm', 'audio/mpeg', 'audio/wav'];
+
+    if (!in_array($file['type'], $allowed_types)) {
+        wp_send_json_error('❌ Định dạng không hợp lệ.');
+        return;
+    }
+
+    $upload = wp_handle_upload($file, ['test_form' => false]);
+
+    if (isset($upload['error'])) {
+        wp_send_json_error('❌ Upload thất bại: ' . $upload['error']);
+        return;
+    }
+
+    $file_path = $upload['file'];
+    $result = transcribe_audio_to_text($file_path, '');
+
+    // Xoá file tạm
+    if (file_exists($file_path)) {
+        unlink($file_path);
+    }
+
+    echo esc_html($result);
+    wp_die();
+}
